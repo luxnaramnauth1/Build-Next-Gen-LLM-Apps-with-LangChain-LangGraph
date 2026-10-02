@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package techdocs.retriever.v1;
+
+// First extracted microservice: the document retriever.
+service RetrieverService {
+  // Returns the top_k most relevant documents for a query.
+  rpc GetDocuments (GetDocumentsRequest) returns (GetDocumentsResponse);
+}
+
+message GetDocumentsRequest {
+  string query = 1;       // required, non-empty natural-language question
+  int32  top_k = 2;       // optional, default 3, max 10
+}
+
+message Document {
+  string id      = 1;     // stable document id
+  string title   = 2;
+  string content = 3;     // passage text passed on to the LLM service
+  float  score   = 4;     // relevance score in [0, 1]
+}
+
+message GetDocumentsResponse {
+  repeated Document documents = 1;
+  int32 latency_ms = 2;   // server-side time, useful for observability
+}
